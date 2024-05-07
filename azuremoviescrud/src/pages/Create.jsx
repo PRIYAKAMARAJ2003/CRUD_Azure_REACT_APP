@@ -38,12 +38,36 @@ const Create = () => {
   });
   const [open, setOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: '',
+    comments: ''
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    let newValue = value;
+    let error = '';
+    
+    if (name === 'firstName' || name === 'lastName') {
+      // Only allow alphabets in first name and last name
+      if (!/^[a-zA-Z]*$/.test(value)) {
+        error = 'Only alphabets are allowed';
+      }
+    } else if (name === 'comments') {
+      // Only allow alphabets and spaces in comments
+      if (!/^[a-zA-Z\s]*$/.test(value)) {
+        error = 'Only alphabets and spaces are allowed';
+      }
+    }
+    
     setFormData({
       ...formData,
-      [name]: value
+      [name]: newValue
+    });
+    setErrors({
+      ...errors,
+      [name]: error
     });
   };
 
@@ -96,6 +120,8 @@ const Create = () => {
               startAdornment: <PersonIcon />,
             }}
             required
+            error={!!errors.firstName}
+            helperText={errors.firstName}
           />
           <TextField
             className={classes.textField}
@@ -108,6 +134,8 @@ const Create = () => {
               startAdornment: <PersonIcon />,
             }}
             required
+            error={!!errors.lastName}
+            helperText={errors.lastName}
           />
           <TextField
             className={classes.textField}
@@ -133,6 +161,8 @@ const Create = () => {
             InputProps={{
               startAdornment: <ChatIcon />,
             }}
+            error={!!errors.comments}
+            helperText={errors.comments}
           />
           <Button type="submit" variant="contained" color="primary" className={classes.button} startIcon={<AddIcon />}>
             Add Review
